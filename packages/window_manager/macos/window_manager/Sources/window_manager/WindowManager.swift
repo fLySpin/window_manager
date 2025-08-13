@@ -268,6 +268,7 @@ public class WindowManager: NSObject, NSWindowDelegate {
     
     public func setBounds(_ args: [String: Any]) {
         let animate = args["animate"] as? Bool ?? false
+        let duration = args["duration"] as? Int
         
         var frameRect = mainWindow.frame
         if (args["width"] != nil && args["height"] != nil) {
@@ -284,8 +285,16 @@ public class WindowManager: NSObject, NSWindowDelegate {
             frameRect.topLeft.y = CGFloat(truncating: args["y"] as! NSNumber)
         }
         
-        if (animate) {
+        if animate {
             mainWindow.animator().setFrame(frameRect, display: true, animate: true)
+            if let duration = duration {
+                NSAnimationContext.runAnimationGroup({ context in
+                    context.duration = Double(duration) / 1000.0
+                    self.mainWindow.animator().setFrame(frameRect, display: true, animate: true)
+                }, completionHandler: nil)
+            } else {
+                mainWindow.animator().setFrame(frameRect, display: true, animate: true)
+            }
         } else {
             mainWindow.setFrame(frameRect, display: true)
         }

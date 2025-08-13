@@ -42,8 +42,7 @@ class WindowManager {
 
   final MethodChannel _channel = const MethodChannel('window_manager');
 
-  final ObserverList<WindowListener> _listeners =
-      ObserverList<WindowListener>();
+  final ObserverList<WindowListener> _listeners = ObserverList<WindowListener>();
 
   Future<void> _methodCallHandler(MethodCall call) async {
     for (final WindowListener listener in listeners) {
@@ -77,8 +76,7 @@ class WindowManager {
   }
 
   List<WindowListener> get listeners {
-    final List<WindowListener> localListeners =
-        List<WindowListener>.from(_listeners);
+    final List<WindowListener> localListeners = List<WindowListener>.from(_listeners);
     return localListeners;
   }
 
@@ -379,6 +377,7 @@ class WindowManager {
     Offset? position,
     Size? size,
     bool animate = false,
+    int? duration,
   }) async {
     final Map<String, dynamic> arguments = {
       'devicePixelRatio': getDevicePixelRatio(),
@@ -387,6 +386,7 @@ class WindowManager {
       'width': bounds?.size.width ?? size?.width,
       'height': bounds?.size.height ?? size?.height,
       'animate': animate,
+      'duration': duration,
     }..removeWhere((key, value) => value == null);
     await _channel.invokeMethod('setBounds', arguments);
   }
@@ -418,6 +418,17 @@ class WindowManager {
       null,
       position: position,
       animate: animate,
+    );
+  }
+
+  /// Moves window to position with optional animation duration (milliseconds).
+  Future<void> setPositionWithDuration(Offset position,
+      {bool animate = false, int? duration}) async {
+    await setBounds(
+      null,
+      position: position,
+      animate: animate,
+      duration: duration,
     );
   }
 
